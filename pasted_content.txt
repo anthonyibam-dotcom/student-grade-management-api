@@ -1,0 +1,94 @@
+Act as a Senior Python Backend Engineer. Your task is to build a complete, production-ready REST API for a "Student Grade Management System" using FastAPI, SQLAlchemy, Pydantic v2, and SQLite. 
+
+Create a modular, enterprise-standard repository structure that will look impressive on GitHub.
+
+### 1. Project Requirements & Architecture
+
+#### Tech Stack
+- Framework: FastAPI
+- Database: SQLite (via SQLAlchemy or SQLModel)
+- Validation & Serialization: Pydantic v2
+- Server: Uvicorn
+- Testing: Pytest + HTTPClient / TestClient
+
+#### Project Folder Structure
+Ensure clean separation of concerns:
+student_grade_api/
+├── app/
+│   ├── api/
+│   │   └── v1/
+│   │       ├── endpoints/
+│   │       │   ├── students.py
+│   │       │   ├── courses.py
+│   │       │   ├── grades.py
+│   │       │   └── analytics.py
+│   │       └── router.py
+│   ├── core/
+│   │   ├── config.py
+│   │   └── database.py
+│   ├── models/        # SQLAlchemy ORM models
+│   ├── schemas/       # Pydantic validation schemas
+│   ├── services/      # Business logic layer
+│   └── main.py        # FastAPI initialization & middleware
+├── tests/
+│   ├── test_students.py
+│   ├── test_grades.py
+│   └── test_analytics.py
+├── .gitignore
+├── .env.example
+├── requirements.txt
+└── README.md
+
+### 2. Database Models & Pydantic Schemas
+
+1. **Student Model**: `id` (UUID or Autoincrement PK), `first_name`, `last_name`, `email` (unique, validated), `enrollment_date`, `created_at`.
+2. **Course Model**: `id`, `code` (e.g., "CS101", unique), `title`, `credits` (1-5), `description`.
+3. **Grade Model**: `id`, `student_id` (FK), `course_id` (FK), `score` (float 0.0 - 100.0), `letter_grade` (auto-computed: A, B, C, D, F), `semester` (e.g., "Fall 2026").
+
+### 3. API Endpoints (RESTful CRUD & Analytics)
+
+Implement API versioning under `/api/v1`:
+
+- **Students (`/api/v1/students`)**:
+  - `POST /` - Create student (validate email format)
+  - `GET /` - List students (with pagination query params `limit` and `offset`, search by name)
+  - `GET /{id}` - Get student by ID (include enrolled courses and GPA summary)
+  - `PUT /{id}` - Update student info
+  - `DELETE /{id}` - Delete student (cascade handle grades)
+
+- **Courses (`/api/v1/courses`)**:
+  - Full CRUD operations
+
+- **Grades (`/api/v1/grades`)**:
+  - `POST /` - Submit score for student & course
+  - `GET /` - List grades (filter by `student_id` or `course_id`)
+  - `PUT /{id}` - Update score (recalculates letter grade)
+  - `DELETE /{id}` - Remove grade record
+
+- **Analytics (`/api/v1/analytics`)**:
+  - `GET /students/{id}/gpa` - Calculate cumulative GPA/weighted average for a specific student.
+  - `GET /courses/{id}/stats` - Get mean score, max score, min score, and passing rate for a course.
+
+### 4. Robust Data Validation & Error Handling
+- Use Pydantic field validators for email formats, credit limits, and score bounds (0-100).
+- Throw standard HTTP status codes (`400 Bad Request`, `404 Not Found`, `422 Unprocessable Entity`, `409 Conflict`).
+- Provide custom JSON exception handlers so all errors return a uniform format:
+  `{"success": false, "error": {"code": "STUDENT_NOT_FOUND", "message": "..."}}`
+
+### 5. Automated Tests
+- Write a comprehensive `pytest` test suite covering:
+  - Happy paths for CRUD operations.
+  - Boundary value tests (e.g., submitting score -5 or 105).
+  - GPA calculation logic.
+- Use an in-memory SQLite database fixture for running isolated tests.
+
+### 6. GitHub-Ready Documentation (`README.md`)
+Generate a professional `README.md` containing:
+1. **Badges** (Python version, FastAPI framework, License).
+2. **Features list** highlighting validation, Swagger auto-docs, and analytics capabilities.
+3. **Mermaid.js Database ER Diagram**.
+4. **Local Setup & Execution Guide** (venv setup, installing requirements, running with `uvicorn app.main:app --reload`).
+5. **Interactive Swagger Docs URL** (`http://127.0.0.1:8000/docs`).
+6. **Example `curl` commands** for testing key endpoints.
+
+Execute step-by-step: create all folders, source code files, pytest files, environment settings, and the complete README documentation. Ensure all code is cleanly typed and formatted.
