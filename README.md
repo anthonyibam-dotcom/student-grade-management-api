@@ -1,0 +1,3 @@
+# Student Grade Management API
+
+The Student Grade Management API is a modular backend service designed to streamline academic record-keeping, course tracking, and grade processing...
